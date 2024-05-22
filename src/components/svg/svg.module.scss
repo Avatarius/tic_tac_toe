@@ -1,0 +1,13 @@
+ .svg {
+  inline-size: 75%;
+  block-size: 75%;
+  color: transparent;
+ }
+
+ .svg_active {
+  color: #000;
+ }
+
+ .svg:hover {
+  color: rgba(128, 128, 128, 0.5);
+ }

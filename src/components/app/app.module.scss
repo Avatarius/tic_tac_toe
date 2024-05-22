@@ -1,0 +1,19 @@
+:root {
+  --size: 3;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--size, 3), 1fr);
+  grid-template-rows: repeat(var(--size, 3), 1fr);
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}

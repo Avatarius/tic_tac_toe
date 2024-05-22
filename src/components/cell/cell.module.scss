@@ -1,0 +1,40 @@
+.container {
+  inline-size: 150px;
+  block-size: 150px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.svg {
+  inline-size: 75%;
+  block-size: 75%;
+  color: transparent;
+}
+
+.svg:hover {
+  color: rgba(128, 128, 128, 0.5);
+ }
+
+.svg_active {
+  color: #000;
+}
+
+
+
+/*  .svg {
+  inline-size: 75%;
+  block-size: 75%;
+  color: transparent;
+ }
+
+ .svg_active {
+  color: #000;
+ }
+
+ .svg:hover {
+  color: rgba(128, 128, 128, 0.5);
+ } */
+
+

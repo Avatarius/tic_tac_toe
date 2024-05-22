@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 15px;
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  border-radius: 15px;
+  background: center / 15% no-repeat;
+  inline-size: 100%;
+  min-block-size: 50px;
+}
+
+.item_active {
+  box-shadow: 0 4px 0 #35ff4b;
+}
+
+.item_circle {
+  background-image: url("../../images/circle.svg");
+}
+
+.item_cross {
+  background-image: url("../../images/cross.svg");
+}
