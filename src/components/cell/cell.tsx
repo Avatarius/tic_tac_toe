@@ -6,13 +6,15 @@ import { useState } from "react";
 interface ICellProps {
   value: "" | "o" | "x";
   turn: boolean;
+  isWinner: boolean;
+  isActive: boolean;
   onClick: () => void;
 }
 
 function Cell(props: ICellProps) {
-  const { turn, value, onClick } = props;
+  const { turn, value, isWinner, isActive, onClick } = props;
 
-  const [isActive, setIsActive] = useState(false);
+  // const [isActive, setIsActive] = useState(false);
 
   const cellObj = {
     x: (
@@ -36,10 +38,6 @@ function Cell(props: ICellProps) {
     "": null,
   };
 
-  function handleClick() {
-    onClick();
-    setIsActive(true);
-  }
 
   function displaySvgContent() {
     if (isActive) {
@@ -50,7 +48,7 @@ function Cell(props: ICellProps) {
   }
 
   return (
-    <div className={styles.container} onClick={handleClick}>
+    <div className={clsx({[styles.container]: true, [styles.container_winner]: isWinner})} onClick={onClick}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
