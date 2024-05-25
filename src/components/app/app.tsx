@@ -2,13 +2,11 @@ import { useState, CSSProperties } from "react";
 import { Cell } from "../cell/cell";
 import styles from "./app.module.scss";
 import { Turn } from "../turn/turn";
+import { useCheckWin } from "./hooks/useCheckWin";
+import { ICell } from "../../types";
+import { CellType } from "../../types";
 
-type Cell = "" | "x" | "o";
-
-interface ICell {
-  value: Cell;
-  isActive: boolean;
-  isWinner: boolean;
+interface IWinningCells {
   x: number;
   y: number;
 }
@@ -18,13 +16,20 @@ function App() {
   const [field, setField] = useState(initField(size));
   const [turn, setTurn] = useState(false);
   const [winner, setWinner] = useState("");
+  const [isGameRunning, setIsGameRunning] = useState(true);
 
   function initField(size: number) {
     const array = [];
     for (let i = 0; i < size; i++) {
       const arr = [];
       for (let j = 0; j < size; j++) {
-        arr.push({ value: "", isActive: false, isWinner: false, x: j, y: i });
+        arr.push({
+          value: "" as CellType,
+          isActive: false,
+          isWinner: false,
+          x: j,
+          y: i,
+        });
       }
       array.push(arr);
     }
@@ -32,6 +37,7 @@ function App() {
   }
 
   function checkWin(array: ICell[][]) {
+    let winningCells: IWinningCells[] = [];
     const rows = array;
     const columns = array.map((arr, arrIndex) =>
       array.map((item) => item[arrIndex])
@@ -40,77 +46,65 @@ function App() {
     const diagonal_reversed = array.map(
       (item, index, arr) => item[arr.length - 1 - index]
     );
-    let winningCells: number[][] = [];
-    let winner = "";
-    const isWon = [rows, columns, diagonal, diagonal_reversed].some(
-      (gridArray) => {
-        if (gridArray.every((entity) => !Array.isArray(entity))) {
-          // diagonals
-          const gridArr = gridArray as ICell[];
-          const isEqual = gridArr.every(
-            (item) => item.value !== "" && item.value === gridArr[0].value
-          );
-          if (isEqual) {
-            winningCells = gridArr.map((item) => [item.x, item.y]);
-            winner = gridArr[0].value === "x" ? "Player x" : "Player o";
-          }
-
-          return isEqual;
-        } else {
-          // columns, rows
-          const gridArr = gridArray as ICell[][];
-          const isEqual = gridArr.some((arr) =>
-            arr.every((item) => {
-              const isLineEqual =
-                item.value !== "" && item.value === arr[0].value;
-              if (isLineEqual) {
-                winningCells = arr.map((item) => [item.x, item.y]);
-                winner = item.value === "x" ? "Player x" : "Player o";
-              }
-              return isLineEqual;
-            })
-          );
-          return isEqual;
+    const isWon = [...rows, ...columns, diagonal, diagonal_reversed].some(
+      (arr) => {
+        const isLineEqual = arr.every(
+          (item) => item.value === arr[0].value && item.value !== ""
+        );
+        if (isLineEqual) {
+          winningCells = arr.map((item) => ({ x: item.x, y: item.y }));
+          arr[0].value === "x" ? setWinner("x") : setWinner("o");
         }
+
+        return isLineEqual;
       }
     );
-    if (isWon) {
-      setWinner(winner);
-      setField((prev) => {
-        const array = prev.map((item, index) =>
-          item.map((cell, cellIndex) => {
-            if (
-              winningCells.some(
-                (winningCell) =>
-                  winningCell[0] === cellIndex && winningCell[1] === index
-              )
-            ) {
-              return { ...cell, isWinner: true };
-            }
-            return cell;
-          })
-        );
-        return array;
-      });
-    }
+    return { isWon, winningCells };
+  }
+
+  function handleWin(winningCells: IWinningCells[]) {
+    setField((prev) => {
+      return prev.map((arr) =>
+        arr.map((item) => {
+          if (
+            winningCells.some((cell) => cell.x === item.x && cell.y === item.y)
+          ) {
+            return { ...item, isWinner: true };
+          }
+          return item;
+        })
+      );
+    });
   }
 
   function handleClick(row: number, column: number) {
+    if (!isGameRunning) return;
     setField((prev) => {
       const array = prev.map((item, index) =>
         item.map((cell, cellIndex) => {
-          if (row === index && column === cellIndex && cell.value === '') {
-            return { ...cell, value: turn ? "x" : "o", isActive: true };
+          if (row === index && column === cellIndex && cell.value === "") {
+            return {
+              ...cell,
+              value: turn ? "x" : ("o" as CellType),
+              isActive: true,
+            };
           }
           return cell;
         })
       );
-      checkWin(array as ICell[][]);
+      const { isWon, winningCells } = checkWin(array);
+      if (isWon) {
+        handleWin(winningCells);
+      } else {
+        const isDraw = array.every((arr) =>
+          arr.every((item) => item.value !== "")
+        );
+        isDraw && setWinner("draw");
+      }
+
       return array;
     });
-    field[row][column].value === '' && setTurn((prev) => !prev);
-
-
+    field[row][column].value === "" && setTurn((prev) => !prev);
   }
 
   function handleReset() {
@@ -119,11 +113,27 @@ function App() {
     setTurn(false);
   }
 
+  function displayWinner() {
+    switch(winner) {
+      case 'draw':
+        return (
+          <p>Draw</p>
+        );
+      case 'x':
+      case 'o':
+        return (
+          <p>Player {winner} wins!</p>
+        );
+      default:
+        return null;
+    }
+  }
+
   const fieldUI = field.map((item, index) =>
     item.map((cell, cellIndex) => (
       <Cell
         key={`${index} ${cellIndex}`}
-        value={cell.value as Cell}
+        value={cell.value as CellType}
         turn={turn}
         isWinner={cell.isWinner}
         isActive={cell.isActive}
@@ -141,7 +151,7 @@ function App() {
       <button type="reset" onClick={handleReset}>
         Reset
       </button>
-      {winner && <p>{winner} won</p>}
+      {displayWinner()}
     </section>
   );
 }
