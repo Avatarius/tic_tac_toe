@@ -9,12 +9,11 @@ interface ICellProps {
   isWinner: boolean;
   isActive: boolean;
   onClick: () => void;
+  isGameRunning: boolean;
 }
 
 function Cell(props: ICellProps) {
-  const { turn, value, isWinner, isActive, onClick } = props;
-
-  // const [isActive, setIsActive] = useState(false);
+  const { turn, value, isWinner, isActive, onClick, isGameRunning } = props;
 
   const cellObj = {
     x: (
@@ -38,17 +37,23 @@ function Cell(props: ICellProps) {
     "": null,
   };
 
-
   function displaySvgContent() {
     if (isActive) {
       return cellObj[value];
     } else {
-      return cellObj[turn ? 'x' : 'o'];
+      return cellObj[turn ? "x" : "o"];
     }
   }
 
   return (
-    <div className={clsx({[styles.container]: true, [styles.container_winner]: isWinner})} onClick={onClick}>
+    <div
+      className={clsx({
+        [styles.container]: true,
+        [styles.container_hover]: isGameRunning,
+        [styles.container_winner]: isWinner,
+      })}
+      onClick={onClick}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

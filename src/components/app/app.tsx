@@ -59,7 +59,8 @@ function App() {
         return isLineEqual;
       }
     );
-    return { isWon, winningCells };
+    const isDraw = array.every((arr) => arr.every((item) => item.value !== ""));
+    return { isWon, isDraw, winningCells };
   }
 
   function handleWin(winningCells: IWinningCells[]) {
@@ -92,16 +93,17 @@ function App() {
           return cell;
         })
       );
-      const { isWon, winningCells } = checkWin(array);
+      const { isWon, isDraw, winningCells } = checkWin(array);
+      if (isWon || isDraw) {
+        setIsGameRunning(false);
+      }
+      if (isDraw) {
+        setWinner("draw");
+        return array;
+      }
       if (isWon) {
         handleWin(winningCells);
-      } else {
-        const isDraw = array.every((arr) =>
-          arr.every((item) => item.value !== "")
-        );
-        isDraw && setWinner("draw");
       }
-
       return array;
     });
     field[row][column].value === "" && setTurn((prev) => !prev);
@@ -111,19 +113,16 @@ function App() {
     setField(initField(size));
     setWinner("");
     setTurn(false);
+    setIsGameRunning(true);
   }
 
   function displayWinner() {
-    switch(winner) {
-      case 'draw':
-        return (
-          <p>Draw</p>
-        );
-      case 'x':
-      case 'o':
-        return (
-          <p>Player {winner} wins!</p>
-        );
+    switch (winner) {
+      case "draw":
+        return <p>Draw</p>;
+      case "x":
+      case "o":
+        return <p>Player {winner} wins!</p>;
       default:
         return null;
     }
@@ -138,6 +137,7 @@ function App() {
         isWinner={cell.isWinner}
         isActive={cell.isActive}
         onClick={() => handleClick(index, cellIndex)}
+        isGameRunning={isGameRunning}
       />
     ))
   );
