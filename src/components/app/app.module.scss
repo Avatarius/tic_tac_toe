@@ -1,7 +1,3 @@
-:root {
-  --size: 3;
-}
-
 body {
   font-family: "Ubuntu";
   background-color: #1f1f2f;
@@ -40,3 +36,10 @@ body {
   appearance: none;
   inline-size: 30%;
 }
+
+.size__container {
+  display: flex;
+  justify-content: space-between;
+}
+
+

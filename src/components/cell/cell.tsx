@@ -5,6 +5,7 @@ import { useState } from "react";
 
 interface ICellProps {
   value: "" | "o" | "x";
+  size: number;
   turn: boolean;
   isWinner: boolean;
   isActive: boolean;
@@ -13,7 +14,8 @@ interface ICellProps {
 }
 
 function Cell(props: ICellProps) {
-  const { turn, value, isWinner, isActive, onClick, isGameRunning } = props;
+  const { size, turn, value, isWinner, isActive, onClick, isGameRunning } =
+    props;
 
   const cellObj = {
     x: (
@@ -37,6 +39,16 @@ function Cell(props: ICellProps) {
     "": null,
   };
 
+  let cellSize = 150;
+  let borderRadius = 35;
+  if (size === 5) {
+    cellSize = 130;
+    borderRadius = 30;
+  } else if (size === 7) {
+    cellSize = 90;
+    borderRadius = 25;
+  }
+
   function displaySvgContent() {
     if (isActive) {
       return cellObj[value];
@@ -53,6 +65,11 @@ function Cell(props: ICellProps) {
         [styles.container_winner]: isWinner,
       })}
       onClick={onClick}
+      style={{
+        inlineSize: cellSize,
+        blockSize: cellSize,
+        borderRadius: borderRadius,
+      }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

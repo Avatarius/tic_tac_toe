@@ -3,12 +3,9 @@
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  border-radius: 45px;
   background-color: var(--primary-color, #4b495f);
   transition: background-color 0.2s linear;
   cursor: pointer;
-  inline-size: 150px;
-  block-size: 150px;
 }
 
 .container_winner {
