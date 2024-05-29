@@ -1,10 +1,11 @@
-import { useState, CSSProperties } from "react";
+import { useState } from "react";
 import { Cell } from "../cell/cell";
 import styles from "./app.module.scss";
 import { Turn } from "../turn/turn";
 import { useCheckWin } from "./hooks/useCheckWin";
-import { ICell } from "../../types";
 import { CellType } from "../../types";
+import { Header } from "../header/header";
+import clsx from "clsx";
 
 interface IWinningCells {
   x: number;
@@ -15,8 +16,7 @@ function App() {
   const size = 3; //tmp
   const [field, setField] = useState(initField(size));
   const [turn, setTurn] = useState(false);
-  const [winner, setWinner] = useState("");
-  const [isGameRunning, setIsGameRunning] = useState(true);
+  const { isWon, isDraw, winningCells, winner } = useCheckWin(field);
 
   function initField(size: number) {
     const array = [];
@@ -36,33 +36,6 @@ function App() {
     return array;
   }
 
-  function checkWin(array: ICell[][]) {
-    let winningCells: IWinningCells[] = [];
-    const rows = array;
-    const columns = array.map((arr, arrIndex) =>
-      array.map((item) => item[arrIndex])
-    );
-    const diagonal = array.map((item, index) => item[index]);
-    const diagonal_reversed = array.map(
-      (item, index, arr) => item[arr.length - 1 - index]
-    );
-    const isWon = [...rows, ...columns, diagonal, diagonal_reversed].some(
-      (arr) => {
-        const isLineEqual = arr.every(
-          (item) => item.value === arr[0].value && item.value !== ""
-        );
-        if (isLineEqual) {
-          winningCells = arr.map((item) => ({ x: item.x, y: item.y }));
-          arr[0].value === "x" ? setWinner("x") : setWinner("o");
-        }
-
-        return isLineEqual;
-      }
-    );
-    const isDraw = array.every((arr) => arr.every((item) => item.value !== ""));
-    return { isWon, isDraw, winningCells };
-  }
-
   function handleWin(winningCells: IWinningCells[]) {
     setField((prev) => {
       return prev.map((arr) =>
@@ -79,53 +52,28 @@ function App() {
   }
 
   function handleClick(row: number, column: number) {
-    if (!isGameRunning) return;
-    setField((prev) => {
-      const array = prev.map((item, index) =>
-        item.map((cell, cellIndex) => {
-          if (row === index && column === cellIndex && cell.value === "") {
+    setField((prevField) =>
+      prevField.map((arr, arrIndex) =>
+        arr.map((item, itemIndex) => {
+          if (row === arrIndex && column === itemIndex && item.value === "") {
             return {
-              ...cell,
-              value: turn ? "x" : ("o" as CellType),
+              ...item,
+              value: turn ? "x" : "o",
               isActive: true,
             };
           }
-          return cell;
+          return item;
         })
-      );
-      const { isWon, isDraw, winningCells } = checkWin(array);
-      if (isWon || isDraw) {
-        setIsGameRunning(false);
-      }
-      if (isDraw) {
-        setWinner("draw");
-        return array;
-      }
-      if (isWon) {
-        handleWin(winningCells);
-      }
-      return array;
-    });
-    field[row][column].value === "" && setTurn((prev) => !prev);
+      )
+    );
+    if (field[row][column].value === "") {
+      setTurn((prev) => !prev);
+    }
   }
 
   function handleReset() {
     setField(initField(size));
-    setWinner("");
     setTurn(false);
-    setIsGameRunning(true);
-  }
-
-  function displayWinner() {
-    switch (winner) {
-      case "draw":
-        return <p>Draw</p>;
-      case "x":
-      case "o":
-        return <p>Player {winner} wins!</p>;
-      default:
-        return null;
-    }
   }
 
   const fieldUI = field.map((item, index) =>
@@ -134,25 +82,29 @@ function App() {
         key={`${index} ${cellIndex}`}
         value={cell.value as CellType}
         turn={turn}
-        isWinner={cell.isWinner}
+        isWinner={winningCells.some(
+          (item) => item.x === cell.x && item.y === cell.y
+        )}
         isActive={cell.isActive}
         onClick={() => handleClick(index, cellIndex)}
-        isGameRunning={isGameRunning}
+        isGameRunning={!(isWon || isDraw)}
       />
     ))
   );
   return (
-    <section
-      className={styles.container}
-      style={{ "--size": size } as CSSProperties}
+    <main
+      className={clsx({
+        [styles.container]: true,
+        [styles.container_expanded]: winner,
+      })}
     >
-      <Turn value={turn} />
-      <div className={styles.grid}>{fieldUI}</div>
-      <button type="reset" onClick={handleReset}>
+      <Header winner={winner} />
+      <section className={styles.grid}>{fieldUI}</section>
+      <Turn value={!isWon && !isDraw ? turn : !turn} />
+      <button type="reset" onClick={handleReset} className={styles.button}>
         Reset
       </button>
-      {displayWinner()}
-    </section>
+    </main>
   );
 }
 

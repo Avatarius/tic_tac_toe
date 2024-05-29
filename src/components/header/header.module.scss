@@ -1,0 +1,15 @@
+.container {
+  border-radius: 25px;
+  padding: 15px;
+  background-color: var(--primary-color, #4b495f);
+}
+
+.title {
+  color: #fff;
+  color: transparent;
+  font-weight: 700;
+  font-size: 57px;
+  text-align: center;
+  background-image: var(--gradient-color, #ef927f);
+  background-clip: text;
+}

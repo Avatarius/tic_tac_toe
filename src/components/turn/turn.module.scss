@@ -1,27 +1,33 @@
+
+
 .container {
   display: flex;
+  justify-content: space-between;
   gap: 15px;
+  color: #fff;
+  font-size: 22px;
+  inline-size: 100%;
+
 }
 
 .item {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #000;
-  border-radius: 15px;
-  background: center / 15% no-repeat;
-  inline-size: 100%;
-  min-block-size: 50px;
+  background-color: var(--primary-color, #4b495f);
+  min-block-size: 52px;
+  padding: 5px 45px;
+}
+
+.item_left {
+  border-radius:  8px 40px 8px 40px;
+}
+
+.item_right {
+  border-radius:  40px 8px 40px 8px;
 }
 
 .item_active {
-  box-shadow: 0 4px 0 #35ff4b;
+  background-color: var(--accent-color, #ef927f);
 }
 
-.item_circle {
-  background-image: url("../../images/circle.svg");
-}
-
-.item_cross {
-  background-image: url("../../images/cross.svg");
-}

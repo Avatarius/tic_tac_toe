@@ -2,12 +2,20 @@
   --size: 3;
 }
 
+body {
+  font-family: "Ubuntu";
+  background-color: #1f1f2f;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
+.container_expanded {
+  grid-template-rows: 1fr 0.5fr 5fr 0.5fr 1fr;
+}
 
 .grid {
   display: grid;
@@ -16,4 +24,19 @@
   justify-content: center;
   align-items: center;
   gap: 20px;
+}
+
+.button {
+  align-self: center;
+  margin-block-start: 10px;
+  border: none;
+  border-radius: 30px;
+  padding: 7px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 25px;
+  background-image: var(--gradient-color, #ef927f);
+  cursor: pointer;
+  appearance: none;
+  inline-size: 30%;
 }

@@ -8,12 +8,14 @@ interface ITurnProps {
 
 function Turn({value} : ITurnProps) {
   return (
-    <div className={styles.container}>
-      <div className={clsx({[styles.item]: true, [styles.item_circle]: true, [styles.item_active]: !value})}>
+    <section className={styles.container}>
+      <div className={clsx({[styles.item]: true, [styles.item_left]: true, [styles.item_active]: !value})}>
+        Player 1
       </div>
-      <div className={clsx({[styles.item]: true, [styles.item_cross]: true, [styles.item_active]: value})}>
+      <div className={clsx({[styles.item]: true, [styles.item_right]: true, [styles.item_active]: value})}>
+        Player 2
       </div>
-    </div>
+    </section>
   )
 }
 
