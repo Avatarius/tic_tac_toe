@@ -94,7 +94,11 @@ function App() {
           (item) => item.x === cell.x && item.y === cell.y
         )}
         isActive={cell.isActive}
-        onClick={() => handleClick(index, cellIndex)}
+        onClick={() => {
+          if (!(isWon || isDraw)) {
+            handleClick(index, cellIndex);
+          }
+        }}
         isGameRunning={!(isWon || isDraw)}
       />
     ))
