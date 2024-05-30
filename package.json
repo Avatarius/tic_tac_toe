@@ -1,7 +1,7 @@
 {
+  "homepage": "http://avatarius.github.io/tic_tac_toe",
   "name": "tic tac toe",
   "version": "1.0.0",
-  "homepage": "https://avatarius.github.io/tic_tac_toe",
   "description": "",
   "main": "index.js",
   "scripts": {
